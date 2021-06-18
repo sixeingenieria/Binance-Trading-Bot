@@ -53,9 +53,9 @@ def analyze():
     ma_analysis = analysis.moving_averages[TYPE]
     if ma_analysis >= THRESHOLD:
         paused = True
-        print(f'pausebotmod: {txcolors.WARNING}{SYMBOL} {txcolors.NEGATIVE}Market not looking too good, bot paused from buying {txcolors.WARNING}{ma_analysis}/{THRESHOLD} Waiting {TIME_TO_WAIT} minutes for next market checkup')
+        print(f'pausebotmod: {txcolors.WARNING}{SYMBOL} {txcolors.NEGATIVE}Market not looking too good, {txcolors.WARNING}bot paused from buying {txcolors.NEGATIVE}{ma_analysis}/{THRESHOLD} {txcolors.WARNING}Waiting {TIME_TO_WAIT} minutes for next market checkup')
     else:
-        print(f'pausebotmod: {txcolors.WARNING}{SYMBOL} {txcolors.POSITIVE}Market looks ok, bot is running {txcolors.WARNING}{ma_analysis}/{THRESHOLD} Waiting {TIME_TO_WAIT} minutes for next market checkup ')
+        print(f'pausebotmod: {txcolors.WARNING}{SYMBOL} {txcolors.POSITIVE}Market looks ok, {txcolors.WARNING}bot is running {txcolors.POSITIVE}{ma_analysis}/{THRESHOLD} {txcolors.WARNING}Waiting {TIME_TO_WAIT} minutes for next market checkup ')
         paused = False
 
     return paused

@@ -1077,7 +1077,21 @@ if __name__ == '__main__':
     if os.path.isfile(coins_bought_file_path) and os.stat(coins_bought_file_path).st_size!= 0:
         with open(coins_bought_file_path) as file:
                 coins_bought = json.load(file)
+    gogobot_logo = """
+     .88888.            .88888.            888888ba             dP   
+    d8'   `88          d8'   `88           88    `8b            88   
+    88        .d8888b. 88        .d8888b. a88aaaa8P' .d8888b. d8888P 
+    88   YP88 88'  `88 88   YP88 88'  `88  88   `8b. 88'  `88   88   
+    Y8.   .88 88.  .88 Y8.   .88 88.  .88  88    .88 88.  .88   88   
+    `88888'  `88888P'  `88888'  `88888P'  88888888P `88888P'   dP   
+    ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+    _ _  _ _ ___ _ ____ ___ _ _  _ ____       ___  _    ____ ____ ____ ____    _ _ _ ____ _ ___ 
+    | |\ | |  |  | |__|  |  | |\ | | __       |__] |    |___ |__| [__  |___    | | | |__| |  |  
+    | | \| |  |  | |  |  |  | | \| |__] ...   |    |___ |___ |  | ___] |___    |_|_| |  | |  |  ...
+                                                                                                
+    """
 
+    print(gogobot_logo)
     print('Press Ctrl-Q to stop the script')
 
     if not TEST_MODE:
