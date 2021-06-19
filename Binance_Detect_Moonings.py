@@ -141,6 +141,11 @@ def decimals():
     else:
         return 8
 
+def txcolor(input):
+    if input >= 0:
+        return txcolors.SELL_PROFIT
+    else:
+        return txcolors.SELL_LOSS
 
 def get_price(add_to_historical=True):
     '''Return the current price for all coins on binance'''
@@ -538,7 +543,7 @@ def sell_coins():
 
         # check that the price is below the stop loss or above take profit (if trailing stop loss not used) and sell if this is the case
         if session_struct['sell_all_coins'] == True or lastPrice < coinStopLoss or lastPrice > coinTakeProfit and not USE_TRAILING_STOP_LOSS or coinHoldingTimeLimit < current_time:
-            print(f"{txcolors.SELL_PROFIT if priceChange >= 0. else txcolors.SELL_LOSS}TP or SL reached, selling {coins_bought[coin]['volume']} {coin}. Bought at: {BUY_PRICE} (Price now: {LAST_PRICE})  - {priceChange:.2f}% - Est: {(QUANTITY * priceChange) / 100:.{decimals()}f} {PAIR_WITH}{txcolors.DEFAULT}")
+            print(f"{txcolor(priceChange)}TP or SL reached, selling {coins_bought[coin]['volume']} {coin}. Bought at: {BUY_PRICE} (Price now: {LAST_PRICE})  - {priceChange:.2f}% - Est: {(QUANTITY * priceChange) / 100:.{decimals()}f}")
             # try to create a real order
             try:
 
@@ -589,7 +594,7 @@ def sell_coins():
         # no action; print once every TIME_DIFFERENCE
         if hsp_head == 1:
             if len(coins_bought) > 0:
-                print(f"TP:{coinTakeProfit:.{decimals()}f}:{coins_bought[coin]['take_profit']:.2f} or SL:{coinStopLoss:.{decimals()}f}:{coins_bought[coin]['stop_loss']:.2f} not yet reached, not selling {coin} for now >> Bought at: {BUY_PRICE} - Now: {LAST_PRICE} : {txcolors.SELL_PROFIT if priceChange >= 0. else txcolors.SELL_LOSS}{priceChange:.2f}% Est: {(QUANTITY*(priceChange-(buyFee+sellFee)))/100:.{decimals()}f} {PAIR_WITH}{txcolors.DEFAULT}")
+                print(f"TP:{coinTakeProfit:.{decimals()}f}:{coins_bought[coin]['take_profit']:.2f} or SL:{coinStopLoss:.{decimals()}f}:{coins_bought[coin]['stop_loss']:.2f} not yet reached, not selling {coin} for now >> Bought at: {BUY_PRICE} - Now: {LAST_PRICE} : {txcolor(priceChange)}{priceChange:.2f}% Est: {(QUANTITY*(priceChange-(buyFee+sellFee)))/100:.{decimals()}f}")
     if FULL_LOG:
         if hsp_head == 1 and len(coins_bought) == 0: print(f"No trade slots are currently in use")
 
@@ -687,17 +692,17 @@ def report(type, reportline):
     #More detailed/verbose report style
     if type == 'detailed':
         print(f"{txcolors.NOTICE}>> Using {len(coins_bought)}/{TRADE_SLOTS} trade slots. << \n"
-        ,f"Profit on unsold coins:  {txcolors.SELL_PROFIT if UNREALISED_PERCENT >= 0 else txcolors.SELL_LOSS}{UNREALISED_PERCENT:.2f}%\n"
-        ,f"Closed trades:           {txcolors.SELL_PROFIT if session_struct['closed_trades_percent'] >= 0 else txcolors.SELL_LOSS}{str(CLOSED_TRADES_PERCENT_TRIM)}%\n"
-        ,f"Session profit:          {txcolors.SELL_PROFIT if session_struct['session_profit'] >= 0 else txcolors.SELL_LOSS}{str(SESSION_PROFIT_TRIM)} {PAIR_WITH}\n"
-        ,f"Est. total gains:        {txcolors.SELL_PROFIT if session_struct['TOTAL_GAINS'] >= 0 else txcolors.SELL_LOSS}{session_struct['TOTAL_GAINS']:g} {PAIR_WITH}\n"
-        ,f"Trades won/lost:         {txcolors.SELL_PROFIT if session_struct['win_trade_count'] >= session_struct['loss_trade_count'] else txcolors.SELL_LOSS}{session_struct['win_trade_count']} / {txcolors.SELL_PROFIT if session_struct['win_trade_count'] >= session_struct['loss_trade_count'] else txcolors.SELL_LOSS}{session_struct['loss_trade_count']}\n"
+        ,f"Profit on unsold coins:  {txcolor(UNREALISED_PERCENT)}{UNREALISED_PERCENT:.2f}%\n"
+        ,f"Closed trades:           {txcolor(session_struct['closed_trades_percent'])}{str(CLOSED_TRADES_PERCENT_TRIM)}%\n"
+        ,f"Session profit:          {txcolor(session_struct['session_profit'])}{str(SESSION_PROFIT_TRIM)} {PAIR_WITH}\n"
+        ,f"Est. total gains:        {txcolor(session_struct['TOTAL_GAINS'])}{session_struct['TOTAL_GAINS']:g} {PAIR_WITH}\n"
+        ,f"Trades won/lost:         {txcolor(session_struct['win_trade_count']-session_struct['loss_trade_count'])}{session_struct['win_trade_count']} / {session_struct['loss_trade_count']}\n"
         ,f"Investment:              {txcolors.DEFAULT}{INVESTMENT_TOTAL:g} {PAIR_WITH}\n"
         ,f"Current exposure:        {txcolors.DEFAULT}{session_struct['CURRENT_EXPOSURE']:g} {PAIR_WITH}\n"
-        ,f"New balance:             {txcolors.SELL_PROFIT if session_struct['NEW_BALANCE'] >= INVESTMENT_TOTAL else txcolors.SELL_LOSS}{session_struct['NEW_BALANCE']:g} {PAIR_WITH}\n"
-        ,f"Initial investment:      {txcolors.SELL_PROFIT if session_struct['investment_value'] >= INVESTMENT else txcolors.SELL_LOSS}{session_struct['investment_value']:.2f} USD\n"
-        ,f"Investment gain:         {txcolors.SELL_PROFIT if session_struct['INVESTMENT_GAIN'] >= 0 else txcolors.SELL_LOSS}{session_struct['INVESTMENT_GAIN']:.2f}%\n"
-        ,f"Investment value vain:   {txcolors.SELL_PROFIT if session_struct['investment_value_gain'] >= 0 else txcolors.SELL_LOSS}{str(INVESTMENT_VALUE_GAIN)} USD\n"
+        ,f"New balance:             {txcolor(session_struct['NEW_BALANCE']-INVESTMENT_TOTAL)}{session_struct['NEW_BALANCE']:g} {PAIR_WITH}\n"
+        ,f"Initial investment:      {txcolor(session_struct['investment_value']-INVESTMENT)}{session_struct['investment_value']:.2f} USD\n"
+        ,f"Investment gain:         {txcolor(session_struct['INVESTMENT_GAIN'])}{session_struct['INVESTMENT_GAIN']:.2f}%\n"
+        ,f"Investment value vain:   {txcolor(session_struct['investment_value_gain'])}{str(INVESTMENT_VALUE_GAIN)} USD\n"
         ,f"{reportline} {txcolors.DEFAULT}")
 
     if type == 'message':
